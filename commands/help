@@ -1,0 +1,4 @@
+#!/bin/sh
+
+cat /devrun/commands/README.md
+

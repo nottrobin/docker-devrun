@@ -1,0 +1,19 @@
+##
+# Run make targets using the ubuntudesign/devrun image.
+# You can see a list of the commands in the image here:
+# TODO: Add Git URL
+##
+
+# Tell ubuntudesign/devrun where to find docker
+# Based on https://github.com/docker/compose/releases/download/1.7.1/run.sh
+ifeq ($(DOCKER_HOST),)
+	DOCKER_HOST := /var/run/docker.sock
+	DOCKER_ADDR := -v "$(DOCKER_HOST)":"$(DOCKER_HOST)" -e DOCKER_HOST
+else
+	DOCKER_ADDR := -e DOCKER_HOST -e DOCKER_TLS_VERIFY -e DOCKER_CERT_PATH
+endif
+
+.DEFAULT_GOAL := help
+
+%:
+	@docker run --rm -ti ${DOCKER_ADDR} ${COMPOSE_OPTIONS} -v $(shell pwd):$(shell pwd) -w "$(shell pwd)" ubuntudesign/devrun "$@"
