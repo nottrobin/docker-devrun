@@ -2,12 +2,9 @@
 
 set -e
 
-# If the Dockerfile or dependencies have changed since last build, build the app image again
-last_build=$(cat ${LAST_BUILD_FILE} || echo "0")
-if [[ ${DOCKERFILE_MODIFIED} -gt ${last_build} ]] || [[ ${REQUIREMENTS_MODIFIED} -gt ${last_build} ]]; then
-  build
-fi
+# If dependencies have changed since last build, build the app image again
+[[ ${DEPENDENCIES_MODIFIED} -gt $(cat ${LAST_BUILD_FILE} || echo "0") ]] && build
 
-# Update database with latst migrations
+# Update database with last migrations
 migrate
 docker-compose up web db
