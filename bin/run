@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -e
+
+# If the Dockerfile or dependencies have changed since last build, build the app image again
+last_build=$(cat ${LAST_BUILD_FILE} || echo "0")
+if [[ ${DOCKERFILE_MODIFIED} -gt ${last_build} ]] || [[ ${REQUIREMENTS_MODIFIED} -gt ${last_build} ]]; then
+  build
+fi
+
+# Update database with latst migrations
+migrate
+docker-compose up web db

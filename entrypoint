@@ -1,0 +1,36 @@
+#!/bin/sh
+
+set -e
+
+# Auto-generate a unique COMPOSE_PROJECT name from the directory path
+if [ ! -f ${PROJECT_NAME_FILE} ]; then
+  pwd | sha1sum | awk '{print $1}' | cut -c 1-8 > ${PROJECT_NAME_FILE}
+fi
+
+# Set project name
+export COMPOSE_PROJECT_NAME=$(cat ${PROJECT_NAME_FILE})
+
+# Set environment variables for epoch times when things were modified
+export DOCKERFILE_MODIFIED=$(date +'%s' -r Dockerfile || echo '0')
+export REQUIREMENTS_MODIFIED=$(find requirements -exec date +'%s' -r {} \; | sort -n -r | head -1 || echo '0')
+export MIGRATIONS_MODIFIED=$(find . -regex '.*/migrations/[0-9].*[.]py' -exec date +'%s' -r {} \; | sort -n -r | head -1 || echo '0')
+
+# Add docker-compose file
+if [[ -L docker-compose.devrun.yml ]]; then rm -f docker-compose.devrun.yml; fi
+ln -s /devrun/docker-compose.devrun.yml docker-compose.devrun.yml
+
+# Add database compose file if required
+if [[ -n "${DATABASE}" ]]; then
+  export COMPOSE_FILE=docker-compose.devrun.database.yml
+  if [[ -L docker-compose.devrun.database.yml ]]; then rm -f docker-compose.devrun.database.yml; fi
+  ln -s /devrun/docker-compose.devrun.database.yml docker-compose.devrun.database.yml
+fi
+
+# If no default port is set for this project, set it to 8000
+if ! egrep -q '^PORT=[0-9]+' .env; then
+  echo "No port specified. Settings port to 8000."
+  echo "PORT=8000" >> .env
+fi
+
+# Run the input command
+$@

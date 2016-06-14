@@ -1,5 +1,0 @@
-#!/bin/sh
-
-# Start an interactive session in the devrun container
-
-/bin/sh
