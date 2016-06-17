@@ -1,4 +1,2 @@
-Dockerfile
-docker-compose.devrun.yml
 .compose-project-name
 .last-build.timestamp
