@@ -2,9 +2,13 @@
 
 set -e
 
+# Get timestamp of last build
+LAST_BUILD=0
+[[ -e ${LAST_BUILD_FILE} ]] && LAST_BUILD=$(cat ${LAST_BUILD_FILE})
+
 # If dependencies have changed since last build, build the app image again
-[[ ${DEPENDENCIES_MODIFIED} -gt $(cat ${LAST_BUILD_FILE} || echo "0") ]] && build
+[[ ${LATEST_CHANGE} -gt ${LAST_BUILD} ]] && build
 
 # Update database with last migrations
 migrate
-docker-compose up web db
+run-server
