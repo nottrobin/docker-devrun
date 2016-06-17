@@ -2,7 +2,7 @@ FROM python:2
 
 # Pip requirements files
 ADD requirements /requirements
-ADD /devrun/app-entrypoint /entrypoint
+ADD entrypoint /entrypoint
 
 # Install pip requirements
 RUN pip install -r /requirements/dev.txt
