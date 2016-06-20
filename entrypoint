@@ -7,20 +7,24 @@ if [ ! -f ${PROJECT_NAME_FILE} ]; then
   pwd | sha1sum | awk '{print $1}' | cut -c 1-8 > ${PROJECT_NAME_FILE}
 fi
 
+# Set the working directory
+export WORKDIR=$(pwd)
+
 # Set project name
 export COMPOSE_PROJECT_NAME=$(cat ${PROJECT_NAME_FILE})
 
 # Set when the dependencies were last updated
-dockerfile_modified=$(date +'%s' -r Dockerfile || echo '0')
-requirements_modified=$(find requirements -exec date +'%s' -r {} \; | sort -n -r | head -1 || echo '0')
-export DEPENDENCIES_MODIFIED=$(( dockerfile_modified > requirements_modified ? dockerfile_modified : requirements_modified ))
+dependencies_modified=$(find requirements -exec date +'%s' -r {} \; | sort -n -r | head -1 || echo '0')
+dockerfile_modified=$(stat -c %X /devrun/app-config/Dockerfile)
+export LATEST_CHANGE=$(( dependencies_modified < dockerfile_modified ? dependencies_modified : dockerfile_modified ))
 
-# Add docker-compose file
-[[ ! -e docker-compose.devrun.yml ]] && ln -s /devrun/${COMPOSE_FILE}
+# Add requirements to app
+rm -rf /devrun/app-config/requirements
+cp -r `pwd`/requirements /devrun/app-config/requirements
 
 # If no default port is set for this project, set it to 8000
 if ! egrep -q '^PORT=[0-9]+' .env; then
-  echo "No port specified. Settings port to 8000."
+  echo "No port specified. Setting port to 8000."
   echo "PORT=8000" >> .env
 fi
 
