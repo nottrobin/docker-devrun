@@ -4,6 +4,15 @@
 # https://github.com/ubuntudesign/devrun/tree/master/bin
 ##
 
+# Set extra options if env file exists or port is overridden
+ifeq("$(wildcard .env)","")
+	COMPOSE_OPTIONS += --env-file .env
+endif
+
+ifdef PORT
+	COMPOSE_OPTIONS += --env PORT=${PORT}
+endif
+
 # The docker run command for running devrun image
 define DEVRUN
 docker run ${COMPOSE_OPTIONS} \
@@ -11,7 +20,6 @@ docker run ${COMPOSE_OPTIONS} \
   --tty --interactive \
   --volume "`pwd`":"`pwd`" \
   --workdir "`pwd`" \
-  --env-file .env $(patsubst %,--env PORT=%,$(PORT))  \
   ubuntudesign/devrun:v1.0.3
 endef
 
@@ -52,3 +60,4 @@ check-for-docker:
 %:
 	@${MAKE} --quiet check-for-docker
 	@${DEVRUN} $@
+
