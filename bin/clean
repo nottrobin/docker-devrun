@@ -1,0 +1,7 @@
+#! /bin/sh
+
+set -e
+
+stop  # Make sure nothing's running
+docker-compose rm -v --force --all  # Remove everything created by docker-compose for this project
+rm -f ${PROJECT_NAME_FILE}  # Remove all locally created files

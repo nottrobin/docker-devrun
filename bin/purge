@@ -1,7 +1,0 @@
-#! /bin/sh
-
-set -e
-
-clean-services
-# Remove all locally created files
-rm -f ${PROJECT_NAME_FILE}
