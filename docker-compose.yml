@@ -5,5 +5,4 @@ webapp:
   volumes:
     - "${WORKDIR}:/app"
     - "${COMPOSE_PROJECT_NAME}-deps:/usr/local/lib/python2.7/site-packages"
-  env_file: "${WORKDIR}/.env"
-
+  env_file: "/.env"

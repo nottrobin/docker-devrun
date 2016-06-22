@@ -6,21 +6,22 @@ set -e
 # ===
 
 # If no default port is set for this project, set it to 8000
-if ! egrep -q '^PORT=[0-9]+' .env; then
-  echo "Warning: No port specified. Setting port to 8000."
+if ! egrep -q '^PORT=[0-9]+' .env 2>/dev/null; then
+  echo "Warning: No port specified. Using 8000."
   export PORT=8000
-  echo "PORT=${PORT}" >> .env
 fi
 # If no database preference, set to no database
-if ! egrep -q '^DB=(false|true)' .env; then
+if ! egrep -q '^DB=(false|true)' .env 2>/dev/null; then
   echo "Warning: No database preference detected. Assuming no database."
   export DB=false
-  echo "DB=${DB}" >> .env
 fi
 # Auto-generate a unique COMPOSE_PROJECT name from the directory path
 if [ ! -f ${PROJECT_NAME_FILE} ]; then
   pwd | sha1sum | awk '{print $ 1}' | cut -c 1-8 > ${PROJECT_NAME_FILE}
 fi
+
+# Save environment variables, to be passed through to the webapp
+env > /.env
 
 # Initialise environment variables
 # ===
@@ -32,7 +33,7 @@ export COMPOSE_PROJECT_NAME=$(cat ${PROJECT_NAME_FILE})
 export WORKDIR=$(pwd)
 
 # Choose compose file
-export COMPOSE_FILE=/devrun/docker-compose$(${DB} && echo ".db").yml
+export COMPOSE_FILE=/docker-compose$(${DB} && echo ".db").yml
 
 # Run the input command
 $@
