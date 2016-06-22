@@ -3,4 +3,4 @@
 set -e
 
 stop
-docker-compose down --rmi all
+docker-compose down --volumes --remove-orphans all
