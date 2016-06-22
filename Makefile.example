@@ -5,7 +5,7 @@
 ##
 
 # Set extra options if env file exists or port is overridden
-ifeq("$(wildcard .env)","")
+ifneq ("$(wildcard .env)","")
 	COMPOSE_OPTIONS += --env-file .env
 endif
 
