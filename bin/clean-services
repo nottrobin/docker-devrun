@@ -3,5 +3,5 @@
 set -e
 
 stop
-docker-compose rm -f
+docker-compose rm --fprce --all
 docker-compose down --volumes --remove-orphans
