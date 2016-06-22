@@ -26,10 +26,10 @@ To add devrun to a project, simply copy the `Makefile` and `.gitignore` into the
 wget -O - https://raw.githubusercontent.com/ubuntudesign/devrun/db/Makefile.example > Makefile
 ```
 
-If the project is a git project, and you wish to ignore the files genrated by devrun from the project, add the contents of [`ignore.example`](ignore.makefile) to your project's ignore file, e.g.:
+If the project is a git project it's probably a good idea to also add the one locally generated file, `.compose-project-name`, to your `.gitignore` file.
 
 ``` bash
-wget -O - https://raw.githubusercontent.com/ubuntudesign/devrun/db/gitignore.example >> .gitignore
+echo ".compose-project-name" >> .gitignore
 ```
 
 Configuration
