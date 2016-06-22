@@ -6,15 +6,17 @@ set -e
 # ===
 
 # If no default port is set for this project, set it to 8000
-if ! egrep -q '^PORT=[0-9]+' .env 2>/dev/null; then
+if [ ! -n "$PORT" ]; then
   echo "Warning: No port specified. Using 8000."
   export PORT=8000
 fi
+
 # If no database preference, set to no database
-if ! egrep -q '^DB=(false|true)' .env 2>/dev/null; then
+if [ ! -n "$DB" ]; then
   echo "Warning: No database preference detected. Assuming no database."
   export DB=false
 fi
+
 # Auto-generate a unique COMPOSE_PROJECT name from the directory path
 if [ ! -f ${PROJECT_NAME_FILE} ]; then
   pwd | sha1sum | awk '{print $ 1}' | cut -c 1-8 > ${PROJECT_NAME_FILE}
