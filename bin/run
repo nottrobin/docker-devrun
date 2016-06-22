@@ -1,5 +1,4 @@
 #! /bin/sh
 
-set -e
-
-docker-compose run --rm --service-ports webapp || stop && stop
+docker-compose run --rm --service-ports webapp
+$DB && docker-compose stop db
