@@ -1,5 +1,5 @@
-#!/bin/sh
+#! /bin/sh
 
 set -e
 
-docker-compose run web ./manage.py migrate --noinput
+docker-compose run web migrate --noinput

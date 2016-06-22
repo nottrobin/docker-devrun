@@ -1,32 +1,38 @@
-#!/bin/sh
+#! /bin/sh
 
 set -e
 
+# Set local project setting defaults
+# ===
+
+# If no default port is set for this project, set it to 8000
+if ! egrep -q '^PORT=[0-9]+' .env; then
+  echo "Warning: No port specified. Setting port to 8000."
+  export PORT=8000
+  echo "PORT=${PORT}" >> .env
+fi
+# If no database preference, set to no database
+if ! egrep -q '^DB=(false|true)' .env; then
+  echo "Warning: No database preference detected. Assuming no database."
+  export DB=false
+  echo "DB=${DB}" >> .env
+fi
 # Auto-generate a unique COMPOSE_PROJECT name from the directory path
 if [ ! -f ${PROJECT_NAME_FILE} ]; then
-  pwd | sha1sum | awk '{print $1}' | cut -c 1-8 > ${PROJECT_NAME_FILE}
+  pwd | sha1sum | awk '{print $ 1}' | cut -c 1-8 > ${PROJECT_NAME_FILE}
 fi
 
-# Set the working directory
-export WORKDIR=$(pwd)
+# Initialise environment variables
+# ===
 
 # Set project name
 export COMPOSE_PROJECT_NAME=$(cat ${PROJECT_NAME_FILE})
 
-# Set when the dependencies were last updated
-dependencies_modified=$(find requirements -exec date +'%s' -r {} \; | sort -n -r | head -1 || echo '0')
-dockerfile_modified=$(stat -c %X /devrun/app-config/Dockerfile)
-export LATEST_CHANGE=$(( dependencies_modified < dockerfile_modified ? dependencies_modified : dockerfile_modified ))
+# Set the working directory
+export WORKDIR=$(pwd)
 
-# Add requirements to app
-rm -rf /devrun/app-config/requirements
-cp -r `pwd`/requirements /devrun/app-config/requirements
-
-# If no default port is set for this project, set it to 8000
-if ! egrep -q '^PORT=[0-9]+' .env; then
-  echo "No port specified. Setting port to 8000."
-  echo "PORT=8000" >> .env
-fi
+# Choose compose file
+export COMPOSE_FILE=/devrun/docker-compose$(${DB} && echo ".db").yml
 
 # Run the input command
 $@

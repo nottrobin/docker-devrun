@@ -13,6 +13,7 @@ else
 	DOCKER_ADDR := --env DOCKER_HOST --env DOCKER_TLS_VERIFY --env DOCKER_CERT_PATH
 endif
 
+# The docker run command for running devrun image
 define DEVRUN
 docker run \
   ${DOCKER_ADDR} ${COMPOSE_OPTIONS} \
@@ -20,9 +21,10 @@ docker run \
   --volume "`pwd`":"`pwd`" \
   --workdir "`pwd`" \
   --env-file .env $(patsubst %,--env PORT=%,$(PORT))  \
-  devrun
+  ubuntudesign/devrun:v1.0.0
 endef
 
+# Error message if docker is missing
 define DOCKER_MISSING
 Error: Docker not installed
 ==
@@ -32,6 +34,7 @@ https://docs.docker.com/engine/installation/
 
 endef
 
+# Error message if user is not in docker group
 define NOT_IN_GROUP
 Error: User not in docker group
 ===
@@ -45,6 +48,12 @@ export GROUP_MESSAGE INSTALL_MESSAGE
 
 .DEFAULT_GOAL := commands
 
+.env:
+	@echo "Notice: .env file not found. Initialising with PORT=8000 and DB=false."
+	@echo ""
+	@echo "PORT=8000" >> .env
+	@echo "DB=false" >> .env
+
 check-for-docker:
 	@if ! command -v docker >/dev/null 2>&1 || ! grep -q '^docker:' /etc/group; then \
 	    echo >&2 "$$DOCKER_MISSING"; \
@@ -56,5 +65,7 @@ check-for-docker:
 	fi
 
 %:
+	@${MAKE} --quiet .env
 	@${MAKE} --quiet check-for-docker
 	@${DEVRUN} $@
+

@@ -1,7 +1,7 @@
-#!/bin/sh
+#! /bin/sh
 
 set -e
 
 clean-services
 # Remove all locally created files
-rm -f docker-compose.devrun.yml docker-compose.devrun.database.yml ${LAST_MIGRATION_FILE} ${LAST_BUILD_FILE} ${PROJECT_NAME_FILE}
+rm -f ${PROJECT_NAME_FILE}

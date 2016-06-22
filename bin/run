@@ -1,14 +1,5 @@
-#!/bin/sh
+#! /bin/sh
 
 set -e
 
-# Get timestamp of last build
-LAST_BUILD=0
-[[ -e ${LAST_BUILD_FILE} ]] && LAST_BUILD=$(cat ${LAST_BUILD_FILE})
-
-# If dependencies have changed since last build, build the app image again
-[[ ${LATEST_CHANGE} -gt ${LAST_BUILD} ]] && build
-
-# Update database with last migrations
-migrate
-run-server
+docker-compose run --rm --service-ports webapp || stop && stop

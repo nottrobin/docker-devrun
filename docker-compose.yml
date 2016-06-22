@@ -1,0 +1,8 @@
+webapp:
+  image: ubuntudesign/django-app:v1.0.1
+  ports:
+    - "${PORT}:5000"
+  volumes:
+    - "${WORKDIR}:/app"
+    - "${COMPOSE_PROJECT_NAME}-deps:/usr/local/lib/python2.7/site-packages"
+  env_file: "${WORKDIR}/.env"

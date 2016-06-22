@@ -1,8 +1,7 @@
 Available commands
 ===
 
-- run: Build dependencies & run the development server and the database
-- run-server: Run development server and the database
+- run: Build dependencies & run the development server
 - stop: Stop any running services
 - build: Rebuild the application container, e.g. to update dependencies
 - migrate: Update the DB by running Django's `migrate` command
