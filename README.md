@@ -40,7 +40,7 @@ All configuration happens in the `.env`, where you should define 2 variables:
 - `PORT`: The local port on which to serve the webapp
 - `DB`: A boolean (`true`/`false`) indicating whether the project needs a database
 
-If no `.env` file exists, one will be created with the following contents:
+If no `.env` file exists, devrun will use port 8000 and assume no database, the equivalent of creating the following `.env` file:
 
 ``` bash
 PORT=8000
