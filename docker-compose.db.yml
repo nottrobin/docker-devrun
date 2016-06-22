@@ -1,15 +1,22 @@
-webapp:
-  extends:
-    file: docker-compose.yml
-    service: webapp
-  links:
-    - db
+version: '2'
 
-db:
-  image: postgres
+services:
+  webapp:
+    extends:
+      file: docker-compose.yml
+      service: webapp
+    links:
+      - db
 
-db-client:
-  image: postgres
-  links:
-    - db
-  command: bash -c "until psql -h db -U postgres; do echo 'Waiting 2 seconds...'; sleep 2; done"
+  db:
+    image: postgres
+
+  db-client:
+    image: postgres
+    links:
+      - db
+    command: bash -c "until psql -h db -U postgres; do echo 'Waiting 2 seconds...'; sleep 2; done"
+
+volumes:
+  dependencies:
+    driver: local
