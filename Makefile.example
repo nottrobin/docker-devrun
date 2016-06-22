@@ -7,8 +7,7 @@
 # Tell ubuntudesign/devrun where to find docker
 # Based on https://github.com/docker/compose/releases/download/1.7.1/run.sh
 ifeq ($(DOCKER_HOST),)
-	DOCKER_HOST := /var/run/docker.sock
-	DOCKER_ADDR := --volume "$(DOCKER_HOST)":"$(DOCKER_HOST)" --env DOCKER_HOST
+	DOCKER_ADDR := --volume /var/run/docker.sock:/var/run/docker.sock
 else
 	DOCKER_ADDR := --env DOCKER_HOST --env DOCKER_TLS_VERIFY --env DOCKER_CERT_PATH
 endif
@@ -68,3 +67,4 @@ check-for-docker:
 	@${MAKE} --quiet .env
 	@${MAKE} --quiet check-for-docker
 	@${DEVRUN} $@
+
