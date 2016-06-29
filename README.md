@@ -23,7 +23,7 @@ Adding devrun to a project
 To add devrun to a project, simply copy the `Makefile` and `.gitignore` into the project:
 
 ``` bash
-wget -O - https://raw.githubusercontent.com/ubuntudesign/devrun/db/Makefile.example > Makefile
+wget -O - https://raw.githubusercontent.com/ubuntudesign/devrun/master/Makefile.example > Makefile
 ```
 
 If the project is a git project it's probably a good idea to also add the one locally generated file, `.compose-project-name`, to your `.gitignore` file.
