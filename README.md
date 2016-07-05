@@ -6,7 +6,7 @@ A docker image to assist with running Django projects in local development envir
 Dependencies
 ---
 
-To run devrun, [[docker must be installed]](https://docs.docker.com/engine/installation/) on the local system, and the current user must be in the `docker` group.
+To run devrun, [docker must be installed](https://docs.docker.com/engine/installation/) on the local system, and the current user must be in the `docker` group.
 
 Usage
 ---
