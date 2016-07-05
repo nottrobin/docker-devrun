@@ -2,7 +2,9 @@
 
 set -e
 
-stop  # Make sure nothing's running
-docker-compose rm -v --force --all  # Remove everything created by docker-compose for this project
-docker-compose down --volumes --remove-orphans  # Make sure volumes are cleaned up
-rm -f ${PROJECT_NAME_FILE}  # Remove all locally created files
+{
+    stop  # Make sure nothing's running
+    docker-compose rm -v --force --all  # Remove everything created by docker-compose for this project
+    docker-compose down --volumes --remove-orphans  # Make sure volumes are cleaned up
+    rm -f ${PROJECT_NAME_FILE}  # Remove all locally created files
+} || true  # Ignore all errors - cleaning is always only our best attempt
