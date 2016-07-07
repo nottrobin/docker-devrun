@@ -1,4 +1,5 @@
 #! /bin/sh
 
+if $DB_RUNNING; then docker-compose stop db; fi
 docker-compose rm db
 migrate

@@ -1,5 +1,4 @@
 #! /bin/sh
 
-database_already_running=$(docker-compose exec db true 2> /dev/null && echo "true" || echo "false")
 docker-compose run --rm webapp migrate --noinput
-if ! $database_already_running; then docker-compose stop db; fi
+if ! $DB_RUNNING; then docker-compose stop db; fi

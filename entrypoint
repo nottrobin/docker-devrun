@@ -17,6 +17,11 @@ if [ ! -n "$DB" ]; then
   export DB=false
 fi
 
+# Is the database already running?
+if $DB; then
+  export DB_RUNNING=$(docker-compose exec db true 2> /dev/null && echo "true" || echo "false")
+fi
+
 # Auto-generate a unique COMPOSE_PROJECT name from the directory path
 if [ ! -f ${PROJECT_NAME_FILE} ]; then
   pwd | sha1sum | awk '{print $ 1}' | cut -c 1-8 > ${PROJECT_NAME_FILE}
