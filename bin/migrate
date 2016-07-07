@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /usr/bin/env sh
 
 docker-compose run --rm webapp migrate --noinput
 if ! $DB_RUNNING; then docker-compose stop db; fi

@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /usr/bin/env sh
 
 if $DB_RUNNING; then docker-compose stop db; fi
 docker-compose rm db
