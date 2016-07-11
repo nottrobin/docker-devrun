@@ -13,6 +13,10 @@ ifdef PORT
 	COMPOSE_OPTIONS += --env PORT=${PORT}
 endif
 
+ifdef DJANGO_DEBUG
+	COMPOSE_OPTIONS += --env DJANGO_DEBUG=${DJANGO_DEBUG}
+endif
+
 # The docker run command for running devrun image
 define DEVRUN
 docker run ${COMPOSE_OPTIONS} \
