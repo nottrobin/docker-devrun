@@ -2,16 +2,17 @@ version: '2'
 
 services:
   webapp:
-    image: ubuntudesign/django-app:v1.0.5
+    image: ubuntudesign/django-app:v1.0.6
     ports:
-      - ${PORT}:5000
+      - ${PORT}:${PORT}
     volumes:
       - ${WORKDIR}:/app
       - dependencies:/usr/local/lib/python2.7/site-packages
-    environment:
-      - DJANGO_DEBUG=true
-      - SECRET_KEY=no_secret
     env_file: /.env
+    environment:
+      - PORT=${PORT}
+      - DJANGO_DEBUG=${DJANGO_DEBUG}
+      - SECRET_KEY=${SECRET_KEY}
 
 volumes:
   dependencies:
