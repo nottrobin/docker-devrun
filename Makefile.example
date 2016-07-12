@@ -17,6 +17,10 @@ ifdef DJANGO_DEBUG
 	COMPOSE_OPTIONS += --env DJANGO_DEBUG=${DJANGO_DEBUG}
 endif
 
+ifdef SECRET_KEY
+	COMPOSE_OPTIONS += --env SECRET_KEY=${SECRET_KEY}
+endif
+
 # The docker run command for running devrun image
 define DEVRUN
 docker run ${COMPOSE_OPTIONS} \
