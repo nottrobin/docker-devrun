@@ -5,10 +5,25 @@ set -e
 # Set local project setting defaults
 # ===
 
+# Save any custom environment variables, to be passed through to webapp
+env | sed -E '/PWD|PATH|TERM|SHLVL|HOSTNAME|HOME/d' > /.env
+
 # If no default port is set for this project, set it to 8000
 if [ ! -n "$PORT" ]; then
   echo "Warning: No port specified. Using 8000."
   export PORT=8000
+fi
+
+# By default turn on django debug mode
+if [ ! -n "$DJANGO_DEBUG" ]; then
+  echo "Setting DJANGO_DEBUG=true"
+  export DJANGO_DEBUG=true
+fi
+
+# By default, use insecure secret key
+if [ ! -n "$SECRET_KEY" ]; then
+  echo "Setting SECRET_KEY=no_secret"
+  export SECRET_KEY=no_secret
 fi
 
 # If no database preference, set to no database
@@ -27,9 +42,6 @@ if [ ! -f ${PROJECT_NAME_FILE} ]; then
   pwd | sha1sum | awk '{print $ 1}' | cut -c 1-8 > ${PROJECT_NAME_FILE}
 fi
 
-# Save environment variables, to be passed through to the webapp
-env > /.env
-
 # Initialise environment variables
 # ===
 
@@ -44,3 +56,4 @@ export COMPOSE_FILE=/docker-compose$(${DB} && echo ".db").yml
 
 # Run the input command
 $@
+
