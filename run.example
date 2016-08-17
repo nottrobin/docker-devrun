@@ -9,7 +9,7 @@ set -euo pipefail
 #  --secret-key {key} - Provide a SECRET_KEY setting for Django
 ##
 INVALID="Invalid command. Usage:
-  ./run [--port NUM] [--default {true|false}] [--secret-key KEY] [COMMAND]"
+  ./run [--port NUM] [--debug {true|false}] [--secret-key KEY] [COMMAND]"
 
 function invalid {
     echo "$INVALID"
