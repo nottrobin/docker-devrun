@@ -1,0 +1,82 @@
+#! /usr/bin/env bash
+
+set -euo pipefail
+
+##
+# Get optional arguments
+#  --port {port} - The local port to run the web service on
+#  --debug {true/false} - Turn on/off Django DEBUG mode
+#  --secret-key {key} - Provide a SECRET_KEY setting for Django
+##
+while [[ $# -gt 1 ]]; do
+    key="$1"
+
+    case $key in
+        -p|--port)
+            PORT="$2"
+            shift
+        ;;
+        -d|--debug)
+            DJANGO_DEBUG="$2"
+            shift
+        ;;
+        -s|--secret-key)
+            SECRET_KEY="$2"
+            shift
+        ;;
+        *)
+            echo "Option not recognised: $1"
+            exit 1
+        ;;
+    esac
+    shift
+done
+
+##
+# Setup docker-compose options
+##
+if [ -f .env ]; then COMPOSE_OPTIONS="${COMPOSE_OPTIONS:-} --env-file .env"; fi
+if [ -n "${PORT:-}" ]; then COMPOSE_OPTIONS="${COMPOSE_OPTIONS:-} --env PORT=${PORT}"; fi
+if [ -n "${DJANGO_DEBUG:-}" ]; then COMPOSE_OPTIONS="${COMPOSE_OPTIONS:-} --env DJANGO_DEBUG=${DJANGO_DEBUG}"; fi
+if [ -n "${SECRET_KEY:-}" ]; then COMPOSE_OPTIONS="${COMPOSE_OPTIONS:-} --env SECRET_KEY=${SECRET_KEY}"; fi
+
+##
+# Get positional arguments
+##
+COMMAND=${1:-run}  # default to "run" command
+
+##
+# Check for working docker
+##
+DOCKER_MISSING="
+Error: Docker not installed
+==
+
+Please install Docker before continuing:
+https://docs.docker.com/engine/installation/
+"
+
+NOT_IN_GROUP="
+Error: User not in docker group
+===
+
+Please add this user to the docker group, e.g. with:
+$$ newgrp docker
+"
+
+if ! command -v docker >/dev/null 2>&1; then
+    echo "${DOCKER_MISSING}"
+fi
+if grep -q '^docker:' /etc/group && ! groups | grep -q '\bdocker\b'; then
+    echo "${NOT_IN_GROUP}"
+fi
+
+##
+# Finally, run docker
+##
+docker run ${COMPOSE_OPTIONS:-} \
+  --volume /var/run/docker.sock:/var/run/docker.sock \
+  --tty --interactive \
+  --volume "`pwd`":"`pwd`" \
+  --workdir "`pwd`" \
+  ubuntudesign/devrun:v1.1.7 ${COMMAND}
