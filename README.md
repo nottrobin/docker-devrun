@@ -11,19 +11,26 @@ To run devrun, [docker must be installed](https://docs.docker.com/engine/install
 Usage
 ---
 
-To see all available commands in devrun, simply run `make`:
+To run a standard project in the default way, simply run:
 
 ``` bash
-$ make
+$ ./run
+```
+
+To see all available commands in devrun:
+
+``` bash
+$ ./run commands
 ```
 
 Adding devrun to a project
 ---
 
-To add devrun to a project, simply copy the `Makefile` and `.gitignore` into the project:
+To add devrun to a project, simply copy the `run` script and make it executable:
 
 ``` bash
-wget -O - https://raw.githubusercontent.com/ubuntudesign/devrun/master/Makefile.example > Makefile
+wget -O - https://raw.githubusercontent.com/ubuntudesign/docker-devrun/master/run.example > run
+chmod +x run
 ```
 
 If the project is a git project it's probably a good idea to also add the one locally generated file, `.compose-project-name`, to your `.gitignore` file.
