@@ -8,19 +8,30 @@ set -euo pipefail
 #  --debug {true/false} - Turn on/off Django DEBUG mode
 #  --secret-key {key} - Provide a SECRET_KEY setting for Django
 ##
+INVALID="Invalid command. Usage:
+  ./run [--port NUM] [--default {true|false}] [--secret-key KEY] [COMMAND]"
+
+function invalid {
+    echo "$INVALID"
+    exit 1
+}
+
 while [[ -n "${1:-}" ]] && [[ "${1:0:1}" == "-" ]]; do
     key="$1"
 
     case $key in
         -p|--port)
+            if [ -z "${2:-}" ]; then invalid; fi
             PORT="$2"
             shift
         ;;
         -d|--debug)
+            if [ -z "${2:-}" ]; then invalid; fi
             DJANGO_DEBUG="$2"
             shift
         ;;
         -s|--secret-key)
+            if [ -z "${2:-}" ]; then invalid; fi
             SECRET_KEY="$2"
             shift
         ;;
@@ -28,9 +39,7 @@ while [[ -n "${1:-}" ]] && [[ "${1:0:1}" == "-" ]]; do
             COMMAND="commands"
         ;;
         *)
-            echo "Invalid command. Usage:"
-            echo "  ./run [--port NUM] [--default {true|false}] [--secret-key KEY] [COMMAND]"
-            exit 1
+            invalid
         ;;
     esac
     shift
