@@ -8,7 +8,7 @@ set -euo pipefail
 #  --debug {true/false} - Turn on/off Django DEBUG mode
 #  --secret-key {key} - Provide a SECRET_KEY setting for Django
 ##
-while [[ $# -gt 1 ]]; do
+while [[ -n "${1:-}" ]] && [[ "${1:0:1}" == "-" ]]; do
     key="$1"
 
     case $key in
@@ -24,8 +24,12 @@ while [[ $# -gt 1 ]]; do
             SECRET_KEY="$2"
             shift
         ;;
+        -h|--help)
+            COMMAND="commands"
+        ;;
         *)
-            echo "Option not recognised: $1"
+            echo "Invalid command. Usage:"
+            echo "  ./run [--port NUM] [--default {true|false}] [--secret-key KEY] [COMMAND]"
             exit 1
         ;;
     esac
@@ -43,7 +47,7 @@ if [ -n "${SECRET_KEY:-}" ]; then COMPOSE_OPTIONS="${COMPOSE_OPTIONS:-} --env SE
 ##
 # Get positional arguments
 ##
-COMMAND=${1:-run}  # default to "run" command
+if [ -z "${COMMAND:-}" ]; then COMMAND=${1:-run}; fi  # default to "run" command
 
 ##
 # Check for working docker
