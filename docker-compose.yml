@@ -13,8 +13,18 @@ services:
       - PORT=${PORT}
       - DJANGO_DEBUG=${DJANGO_DEBUG}
       - SECRET_KEY=${SECRET_KEY}
+  node:
+    env_file: /.env
+    image: ubuntudesign/node:v1.0.2
+    volumes:
+      - ${WORKDIR}:/app
+      - npm-packages:/packages/node_modules
+  watch-css:
+    extends: node
+    command: "npm run-script watch-css"
 
 volumes:
   dependencies:
     driver: local
-
+  npm-packages:
+    driver: local

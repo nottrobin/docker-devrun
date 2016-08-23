@@ -1,0 +1,5 @@
+#! /usr/bin/env sh
+
+set -euo pipefail  # safe mode
+
+docker-compose up -t 2 watch-css
