@@ -1,0 +1,40 @@
+#! /usr/bin/env sh
+
+set -euo pipefail  # safe mode
+
+##
+# Read optional arguments
+##
+while [[ -n "${1:-}" ]] && [[ "${1:0:1}" == "-" ]]; do
+    key="$1"
+
+    case $key in
+        -w|--watch-css)
+            WATCH_CSS=true
+        ;;
+        -h|--help)
+            echo -e "\nUsage:\n  $ ./run server [--watch-css]"
+            exit
+        ;;
+    esac
+    shift
+done
+
+if [ ! -n "${WATCH_CSS:-}" ]; then export WATCH_CSS=false; fi
+
+services="webapp"
+if ${WATCH_CSS}; then
+  services="${services} watch-css"
+fi
+
+echo "
+===
+The webservice will be available at:
+http://127.0.0.1:${PORT}
+
+Watch for CSS changes: ${WATCH_CSS}
+===
+"
+
+docker-compose up -t 2 ${services}
+if ${DB:-}; then docker-compose stop db; fi
