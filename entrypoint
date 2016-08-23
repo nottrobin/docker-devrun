@@ -1,59 +1,75 @@
 #! /bin/sh
 
-set -e
+set -euo pipefail  # safe mode
+
+# Environment settings
+# ===
+if [ ! -f ${PROJECT_NAME_FILE} ]; then
+  # Generate project name
+  pwd | sha1sum | awk '{print $ 1}' | cut -c 1-8 > ${PROJECT_NAME_FILE}
+fi
+export COMPOSE_PROJECT_NAME=$(cat ${PROJECT_NAME_FILE})  # Set project name
+export WORKDIR=$(pwd)  # Set the working directory
+export COMPOSE_FILE=/docker-compose$(${DB:-} && echo ".db").yml  # Choose compose file
 
 # Set local project setting defaults
 # ===
 
-# Save any custom environment variables, to be passed through to webapp
-env | sed -E '/PWD|PATH|TERM|SHLVL|HOSTNAME|HOME/d' > /.env
+##
+# Get optional arguments
+#  --port {port} - The local port to run the web service on
+#  --debug {true/false} - Turn on/off Django DEBUG mode
+#  --secret-key {key} - Provide a SECRET_KEY setting for Django
+##
+invalid() {
+    echo "Command not recognised."
+    usage
+    exit 1
+}
 
-# If no default port is set for this project, set it to 8000
-if [ ! -n "$PORT" ]; then
-  echo "Warning: No port specified. Using 8000."
-  export PORT=8000
-fi
+while [[ -n "${1:-}" ]] && [[ "${1:0:1}" == "-" ]]; do
+    key="$1"
 
-# By default turn on django debug mode
-if [ ! -n "$DJANGO_DEBUG" ]; then
-  echo "Setting DJANGO_DEBUG=true"
-  export DJANGO_DEBUG=true
-fi
-
-# By default, use insecure secret key
-if [ ! -n "$SECRET_KEY" ]; then
-  echo "Setting SECRET_KEY=no_secret"
-  export SECRET_KEY=no_secret
-fi
-
-# If no database preference, set to no database
-if [ ! -n "$DB" ]; then
-  echo "Warning: No database preference detected. Assuming no database."
-  export DB=false
-fi
+    case $key in
+        -p|--port)
+            if [ -z "${2:-}" ]; then invalid; fi
+            PORT="$2"
+            shift
+        ;;
+        -s|--secret-key)
+            if [ -z "${2:-}" ]; then invalid; fi
+            SECRET_KEY="$2"
+            shift
+        ;;
+        --no-debug)
+            DJANGO_DEBUG=false
+        ;;
+        --db)
+            DB=true
+        ;;
+        -h|--help)
+            usage
+            exit
+        ;;
+        *)
+            invalid
+        ;;
+    esac
+    shift
+done
 
 # Is the database already running?
-if $DB; then
+if ${DB}; then
   export DB_RUNNING=$(docker-compose exec db true 2> /dev/null && echo "true" || echo "false")
 fi
 
-# Auto-generate a unique COMPOSE_PROJECT name from the directory path
-if [ ! -f ${PROJECT_NAME_FILE} ]; then
-  pwd | sha1sum | awk '{print $ 1}' | cut -c 1-8 > ${PROJECT_NAME_FILE}
-fi
-
-# Initialise environment variables
-# ===
-
-# Set project name
-export COMPOSE_PROJECT_NAME=$(cat ${PROJECT_NAME_FILE})
-
-# Set the working directory
-export WORKDIR=$(pwd)
-
-# Choose compose file
-export COMPOSE_FILE=/docker-compose$(${DB} && echo ".db").yml
-
 # Run the input command
-$@
+if [ -n "${1:-}" ]; then
+  command=$1
+  shift
+  arguments=$@
 
+  ${command} ${arguments}
+else
+  server
+fi

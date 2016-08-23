@@ -29,7 +29,7 @@ Adding devrun to a project
 To add devrun to a project, simply copy the `run` script and make it executable:
 
 ``` bash
-wget -O - https://raw.githubusercontent.com/ubuntudesign/docker-devrun/master/run.example > run
+wget -O - https://raw.githubusercontent.com/ubuntudesign/docker-devrun/master/examples/run > run
 chmod +x run
 ```
 
