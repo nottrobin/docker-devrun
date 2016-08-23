@@ -63,6 +63,9 @@ if ${DB}; then
   export DB_RUNNING=$(docker-compose exec db true 2> /dev/null && echo "true" || echo "false")
 fi
 
+# Save any custom environment variables, to be passed through to child images
+env | sed -E '/PWD|PATH|TERM|SHLVL|HOSTNAME|HOME/d' > /.env
+
 # Run the input command
 if [ -n "${1:-}" ]; then
   command=$1

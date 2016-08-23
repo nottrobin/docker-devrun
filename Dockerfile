@@ -10,7 +10,6 @@ ENV DJANGO_DEBUG=true
 ENV SECRET_KEY=no_secret
 ENV WATCH_CSS=false
 
-RUN touch /.env
 ADD docker-compose.db.yml /docker-compose.db.yml
 ADD docker-compose.yml /docker-compose.yml
 ADD entrypoint /entrypoint
